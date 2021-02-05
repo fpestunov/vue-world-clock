@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/vue@next"></script>
+  <style>
+    .border {
+      border: 3px solid #555;
+      border-radius: 10px;
+      padding: 5px;
+      width: 100px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <div>
+      <strong>Часы</strong> <a href="#">Цифровые</a> | <a href="#">Аналоговые</a>
+      <strong>Добавление</strong> 
+      <select v-model="selected">
+        <option v-for="option in towns" v-bind:value="option">
+          {{ option }}
+        </option>
+      </select>
+      <button @click="addTown">Добавить</button>
+    </div>
+
+    <hr>
+
+    <div v-for="town in list">
+
+      <div class="border">
+        <strong>{{ hours }}:{{ minutes }}:{{ seconds }}</strong>
+        <p>{{ town }}</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <script>
+    
+    function padZero(number) {
+      if (number < 10) {
+        return "0" + number;
+      }
+      return number;
+    }
+
+    const getDate = () => new Date();
+
+    const getSeconds = () => padZero(getDate().getSeconds());
+    const getMinutes = () => padZero(getDate().getMinutes());
+    const getHours = () => padZero(getDate().getHours());
+
+    
+    const app = Vue.createApp({
+      data() {
+        return {
+          ticker: null,
+          selected: '',
+          list: [],
+          towns: ['Tokyo', 'Moscow', 'London'],
+          hours: getHours(),
+          minutes: getMinutes(),
+          seconds: getSeconds(),
+        }
+      },
+      created() {
+        this.ticker = setInterval(() => {
+          this.minutes = getMinutes();
+          this.hours = getHours();
+          this.seconds = getSeconds();
+        }, 1000);
+      },
+      destroyed() {
+        clearInterval(this.ticker);
+      },
+      methods: {
+        addTown() {
+          this.list.push(this.selected);
+          // console.log(this.selected);
+        }
+      }
+    })
+    const mountedApp = app.mount('#app')
+  </script>
+</body>
+</html>
